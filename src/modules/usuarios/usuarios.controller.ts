@@ -31,12 +31,12 @@ export class UsuariosController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
+  update(@Param('id', ParseIntPipe) id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
     return this._usuariosService.update(+id, updateUsuarioDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: string,) {
     return this._usuariosService.remove(+id);
   }
 }
