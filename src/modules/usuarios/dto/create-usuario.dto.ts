@@ -1,4 +1,4 @@
-import { IsEmail, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsEmail, IsNumber, IsString } from "class-validator";
 
 export class CreateUsuarioDto {
     @IsNumber()
@@ -16,4 +16,7 @@ export class CreateUsuarioDto {
 
     @IsNumber()
     idrol: number;
+
+    @IsBoolean()
+    activo: boolean;
 }

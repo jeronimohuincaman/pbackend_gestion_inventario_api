@@ -10,8 +10,15 @@ export class UsuariosService {
     private readonly _prismaService: PrismaService
   ) { }
 
-  create(createUsuarioDto: CreateUsuarioDto) {
-    return 'This action adds a new usuario';
+  async create(createUsuarioDto: CreateUsuarioDto) {
+    try {
+      const nuevoRol = await this._prismaService.usuario.create({
+        data: createUsuarioDto
+      });
+      return nuevoRol;
+    } catch (error) {
+      throw new NotFoundException('Error al crear el usuario: ' + error);
+    }
   }
 
   async findAll(paginator: PaginatorDto) {
@@ -33,6 +40,7 @@ export class UsuariosService {
     const data = await this._prismaService.usuario.findMany({
       skip: page ? (page - 1) * perPage : undefined,
       take: perPage ? perPage : undefined,
+      where: { activo: true }
     })
 
     return {
@@ -43,7 +51,7 @@ export class UsuariosService {
 
   async findOne(id: number) {
     const usuarios = await this._prismaService.usuario.findFirst({
-      where: { idusuario: id }
+      where: { idusuario: id, activo: true }
     });
 
     if (!usuarios) throw new NotFoundException('No se encontraron usuarios');
@@ -51,11 +59,34 @@ export class UsuariosService {
     return usuarios;
   }
 
-  update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
-    return `This action updates a #${id} usuario`;
+  async update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
+
+    const existe = await this._prismaService.usuario.findUnique({
+      where: { idusuario: id, activo: true }
+    });
+
+    if (!existe) throw new NotFoundException(`No se encontro el usuario ${id}`);
+
+    const usuarioActualizado = this._prismaService.usuario.update({
+      where: { idusuario: id },
+      data: updateUsuarioDto
+    });
+
+    return usuarioActualizado;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} usuario`;
+  async remove(id: number) {
+    const existe = await this._prismaService.usuario.findUnique({
+      where: { idusuario: id }
+    });
+
+    if (!existe) throw new NotFoundException(`No se encontro el usuario ${id}`);
+
+    const result = await this._prismaService.usuario.update({
+      where: { idusuario: id },
+      data: { activo: false }
+    });
+
+    return result;
   }
 }

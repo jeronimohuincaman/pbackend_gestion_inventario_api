@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUsuarioDto } from './create-usuario.dto';
-import { IsNumber, IsPositive } from 'class-validator';
+import { IsBoolean, IsNumber, IsPositive } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UpdateUsuarioDto extends PartialType(CreateUsuarioDto) {
@@ -8,4 +8,8 @@ export class UpdateUsuarioDto extends PartialType(CreateUsuarioDto) {
     @IsPositive()
     @Type(() => Number)
     idusuario: number;
+
+    @IsBoolean()
+    @Type(() => Boolean)
+    activo?: boolean;
 }

@@ -10,8 +10,11 @@ export class UsuariosController {
   constructor(private readonly _usuariosService: UsuariosService) { }
 
   @Post()
-  create(@Body() createUsuarioDto: CreateUsuarioDto) {
-    return this._usuariosService.create(createUsuarioDto);
+  async create(@Body() createUsuarioDto: CreateUsuarioDto, @Res() response: Response) {
+    const result = await this._usuariosService.create(createUsuarioDto);
+
+    return response.status(HttpStatus.CREATED).json({ ok: true, result, msg: 'Usuario creado con exito' });
+
   }
 
   @Get()
@@ -31,12 +34,16 @@ export class UsuariosController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this._usuariosService.update(+id, updateUsuarioDto);
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateUsuarioDto: UpdateUsuarioDto, @Res() response: Response) {
+    const result = await this._usuariosService.update(id, updateUsuarioDto);
+
+    return response.status(HttpStatus.OK).json({ ok: true, result, msg: 'Usuario editado con exito' });
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: string,) {
-    return this._usuariosService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
+    const result = await this._usuariosService.remove(id);
+
+    return response.status(HttpStatus.OK).json({ ok: true, result, msg: 'Usuario eliminado con exito' });
   }
 }
