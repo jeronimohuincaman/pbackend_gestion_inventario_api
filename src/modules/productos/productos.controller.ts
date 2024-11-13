@@ -10,8 +10,9 @@ export class ProductosController {
   constructor(private readonly _productosService: ProductosService) { }
 
   @Post()
-  create(@Body() createProductoDto: CreateProductoDto) {
-    return this._productosService.create(createProductoDto);
+  async create(@Body() createProductoDto: CreateProductoDto, @Res() response: Response) {
+    const result = await this._productosService.create(createProductoDto);
+    return response.status(HttpStatus.CREATED).json({ ok: true, result, msg: 'Producto creado con exito' });
   }
 
   @Get()
@@ -30,15 +31,18 @@ export class ProductosController {
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateProductoDto: UpdateProductoDto
-  ) {
-    return this._productosService.update(id, updateProductoDto);
+    @Body() updateProductoDto: UpdateProductoDto, @Res() response: Response) {
+    const result = await this._productosService.update(id, updateProductoDto);
+
+    return response.status(HttpStatus.OK).json({ ok: true, result, msg: 'Producto editado con exito' });
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this._productosService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
+    const result = await this._productosService.remove(id);
+
+    return response.status(HttpStatus.OK).json({ ok: true, result, msg: 'Producto eliminado con exito' });
   }
 }

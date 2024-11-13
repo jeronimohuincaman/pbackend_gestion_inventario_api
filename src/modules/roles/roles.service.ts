@@ -17,7 +17,7 @@ export class RolesService {
       });
       return nuevoRol;
     } catch (error) {
-      return new NotFoundException('Error al crear el rol');
+      throw new NotFoundException('Error al crear el rol: ' + error);
     }
 
   }
@@ -72,8 +72,6 @@ export class RolesService {
       where: { idrol: id },
       data: updateRoleDto
     });
-
-
 
     return rolActualizado;
   }
