@@ -10,14 +10,16 @@ export class RolesController {
   constructor(private readonly _rolesService: RolesService) { }
 
   @Post()
-  create(@Body() createRoleDto: CreateRoleDto) {
-    return this._rolesService.create(createRoleDto);
+  async create(@Body() createRoleDto: CreateRoleDto, @Res() response: Response) {
+    const result = await this._rolesService.create(createRoleDto);
+
+    return response.status(HttpStatus.CREATED).json({ ok: true, result, msg: 'Rol creado con exito' });
   }
 
   @Get()
   async findAll(@Query() paginator: PaginatorDto, @Res() response: Response) {
     const result = await this._rolesService.findAll(paginator);
-    response.status(HttpStatus.OK).json({ ok: true, result, msg: 'Aprobado' });
+    return response.status(HttpStatus.OK).json({ ok: true, result, msg: 'Roles obtenidos con exito' });
   }
 
   @Get(':id')
@@ -26,17 +28,20 @@ export class RolesController {
     @Res() response: Response
   ) {
     const result = await this._rolesService.findOne(id);
-
-    response.status(HttpStatus.OK).json({ ok: true, result, msg: 'Aprobado' });
+    return response.status(HttpStatus.OK).json({ ok: true, result, msg: 'Rol obtenido con exito' });
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return this._rolesService.update(+id, updateRoleDto);
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateRoleDto: UpdateRoleDto, @Res() response: Response) {
+    const result = await this._rolesService.update(id, updateRoleDto);
+
+    return response.status(HttpStatus.OK).json({ ok: true, result, msg: 'Rol editado con exito' });
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: string) {
-    return this._rolesService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
+    const result = await this._rolesService.remove(id);
+
+    return response.status(HttpStatus.OK).json({ ok: true, result, msg: 'Rol eliminado con exito' });
   }
 }

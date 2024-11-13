@@ -19,4 +19,7 @@ export class CreateRoleDto {
 
     @IsBoolean()
     consulta: boolean;
+
+    @IsBoolean()
+    activo: boolean;
 }

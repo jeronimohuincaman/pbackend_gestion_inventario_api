@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateRoleDto } from './create-role.dto';
-import { IsNumber, IsPositive } from 'class-validator';
+import { IsBoolean, IsNumber, IsPositive } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UpdateRoleDto extends PartialType(CreateRoleDto) {
@@ -9,5 +9,8 @@ export class UpdateRoleDto extends PartialType(CreateRoleDto) {
     @IsPositive()
     @Type(() => Number)
     idrol: number;
-
+    
+    @IsBoolean()
+    @Type(() => Boolean)
+    activo?: boolean;
 }

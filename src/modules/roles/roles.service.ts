@@ -10,8 +10,16 @@ export class RolesService {
     private readonly _prismaService: PrismaService
   ) { }
 
-  create(createRoleDto: CreateRoleDto) {
-    return 'This action adds a new role';
+  async create(createRoleDto: CreateRoleDto) {
+    try {
+      const nuevoRol = await this._prismaService.rol.create({
+        data: createRoleDto
+      });
+      return nuevoRol;
+    } catch (error) {
+      return new NotFoundException('Error al crear el rol');
+    }
+
   }
 
   async findAll(paginator: PaginatorDto) {
@@ -33,6 +41,7 @@ export class RolesService {
     const data = await this._prismaService.rol.findMany({
       skip: page ? (page - 1) * perPage : undefined,
       take: perPage ? perPage : undefined,
+      where: { activo: true }
     })
 
     return {
@@ -43,7 +52,7 @@ export class RolesService {
 
   async findOne(id: number) {
     const roles = await this._prismaService.rol.findFirst({
-      where: { idrol: id }
+      where: { idrol: id, activo: true }
     });
 
     if (!roles) throw new NotFoundException('No se encontraron roles');
@@ -51,11 +60,36 @@ export class RolesService {
     return roles;
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
+  async update(id: number, updateRoleDto: UpdateRoleDto) {
+
+    const existe = await this._prismaService.rol.findUnique({
+      where: { idrol: id, activo: true }
+    });
+
+    if (!existe) throw new NotFoundException(`No se encontro el rol ${id}`);
+
+    const rolActualizado = this._prismaService.rol.update({
+      where: { idrol: id },
+      data: updateRoleDto
+    });
+
+
+
+    return rolActualizado;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+  async remove(id: number) {
+    const existe = await this._prismaService.rol.findUnique({
+      where: { idrol: id }
+    });
+
+    if (!existe) throw new NotFoundException(`No se encontro el rol ${id}`);
+
+    const result = await this._prismaService.rol.update({
+      where: { idrol: id },
+      data: { activo: false }
+    });
+
+    return result;
   }
 }
