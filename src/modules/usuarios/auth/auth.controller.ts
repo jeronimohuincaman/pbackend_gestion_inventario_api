@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
@@ -7,17 +14,17 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  login(@Body() body: { email: string; password: string }) {
-    const user = this.authService.validateUser(body.email, body.password);
+  async login(@Body() body: { email: string; password: string }) {
+    const user = await this.authService.validateUser(body.email, body.password);
 
     if (!user) return { message: 'Credenciales invalidas' };
 
     return this.authService.login(user);
   }
 
-//   @UseGuards(JwtAuthGuard)
-//   @Get('perfil')
-//   getPerfil(@Request() req) {
-//     return 'lindo';
-//   }
+  //   @UseGuards(JwtAuthGuard)
+  //   @Get('perfil')
+  //   getPerfil(@Request() req) {
+  //     return 'lindo';
+  //   }
 }

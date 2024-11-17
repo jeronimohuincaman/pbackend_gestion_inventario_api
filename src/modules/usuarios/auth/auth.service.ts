@@ -1,9 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly _prismaService: PrismaService,
+  ) {}
 
   login(credenciales) {
     const payload = {
@@ -16,13 +20,20 @@ export class AuthService {
     };
   }
 
-  validateUser(email: string, password: string): any {
+  async validateUser(email: string, password: string): Promise<any> {
     // TODO: Desencriptian password hasheada
-    // TODO: Buscar en la BD si existe el usuario
 
-    const user = { idusuario: 1, email: 'lucas@gmail.com', password: '12345' };
-    if (email === user.email && password === user.password) {
-      return user;
+    const result = await this._prismaService.usuario.findUnique({
+      where: { email: email },
+    });
+
+    // Verifica si el usuario no existe
+    if (!result) {
+      throw new NotFoundException('No se encontró el usuario');
+    }
+
+    if (email === result.email && password === result.password) {
+      return result;
     }
 
     return null;
