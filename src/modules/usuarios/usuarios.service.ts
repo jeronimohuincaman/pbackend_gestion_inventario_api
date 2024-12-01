@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -12,10 +12,20 @@ export class UsuariosService {
 
   async create(createUsuarioDto: CreateUsuarioDto) {
     try {
-      const nuevoRol = await this._prismaService.usuario.create({
+
+      const existe_usuario = await this._prismaService.usuario.findFirst({
+        where: {
+          email: createUsuarioDto.email,
+          activo: true
+        }
+      });
+
+      if (existe_usuario) return new InternalServerErrorException('Ya existe un usuario con ese email');
+
+      const nuevoUsuario = await this._prismaService.usuario.create({
         data: createUsuarioDto
       });
-      return nuevoRol;
+      return nuevoUsuario;
     } catch (error) {
       throw new NotFoundException('Error al crear el usuario: ' + error);
     }

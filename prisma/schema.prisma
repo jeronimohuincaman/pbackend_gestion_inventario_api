@@ -10,7 +10,7 @@ datasource db {
 model Usuario {
   idusuario       Int     @id @default(autoincrement())
   nombre_completo String
-  email           String  @unique
+  email           String
   password        String
   idrol           Int
   activo          Boolean @default(true)

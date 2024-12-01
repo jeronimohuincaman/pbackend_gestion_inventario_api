@@ -13,6 +13,10 @@ export class UsuariosController {
   async create(@Body() createUsuarioDto: CreateUsuarioDto, @Res() response: Response) {
     const result = await this._usuariosService.create(createUsuarioDto);
 
+    if(result['status'] === 500) {
+      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ ok: false, result, msg: result['response']['message']});
+    }
+
     return response.status(HttpStatus.CREATED).json({ ok: true, result, msg: 'Usuario creado con exito' });
 
   }
